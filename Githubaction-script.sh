@@ -1,41 +1,35 @@
-#! /bin/bash
-clear
-sum=0
-i="y"
-
-echo " Enter one no."
-read n1
-echo "Enter second no."
-read n2
-while [ $i = "y" ]; do
-	echo "1.Addition"
-	echo "2.Subtraction"
-	echo "3.Multiplication"
-	echo "4.Division"
-	echo "Enter your choice"
-	read ch
-	case $ch in
-	1)
-		sum=$(expr $n1 + $n2)
-		echo "Sum ="$sum
-		;;
-	2)
-		sum=$(expr $n1 - $n2)
-		echo "Sub = "$sum
-		;;
-	3)
-		sum=$(expr $n1 \* $n2)
-		echo "Mul = "$sum
-		;;
-	4)
-		sum=$(expr $n1 / $n2)
-		echo "Div = "$sum
-		;;
-	*) echo "Invalid choice" ;;
-	esac
-	echo "Do u want to continue (y/n)) ?"
-	read i
-	if [ $i != "y" ]; then
-		exit
-	fi
-done
+#!/bin/bash
+date
+echo "uptime:"
+uptime
+echo "Currently connected:"
+w
+echo "--------------------"
+echo "Last logins:"
+last -a | head -3
+echo "--------------------"
+echo "Disk and memory usage:"
+df -h | xargs | awk '{print "Free/total disk: " $11 " / " $9}'
+free -m | xargs | awk '{print "Free/total memory: " $17 " / " $8 " MB"}'
+echo "--------------------"
+start_log=$(head -1 /var/log/messages | cut -c 1-12)
+oom=$(grep -ci kill /var/log/messages)
+echo -n "OOM errors since $start_log :" $oom
+echo ""
+echo "--------------------"
+echo "Utilization and most expensive processes:"
+top -b | head -3
+echo
+top -b | head -10 | tail -4
+echo "--------------------"
+echo "Open TCP ports:"
+nmap -p -T4 127.0.0.1
+echo "--------------------"
+echo "Current connections:"
+ss -s
+echo "--------------------"
+echo "processes:"
+ps auxf --width=200
+echo "--------------------"
+echo "vmstat:"
+vmstat 1 5
